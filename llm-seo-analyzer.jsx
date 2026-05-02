@@ -558,13 +558,15 @@ function priorityStyle(p) {
 }
 
 const CAT_ICONS = {
+  "Prompt Visibility Testing": "◉",
+  "Semantic Depth & Topical Authority": "⊞",
+  "Entity Clarity": "◈",
+  "External Authority & Cross-Platform": "◎",
+  "Citation Worthiness": "▣",
   "Structured Data": "⬡",
-  "Content Clarity": "◈",
-  "Citability": "◎",
-  "Entity Coverage": "⊞",
-  "LLM Discoverability": "◉",
-  "Answer Density": "▣",
-  "Trust Signals": "◈",
+  "Conversational Query Alignment": "💬",
+  "Hallucination Risk": "⚠",
+  "Technical Crawlability": "⚙"
 };
 
 // ── SCORE RING ─────────────────────────────────────────────────────────────────
@@ -627,31 +629,13 @@ function CatCard({ cat }) {
 function SugCard({ sug, idx }) {
   const ps = priorityStyle(sug.priority);
   return (
-    <div className="sug-card" style={{ animationDelay: `${idx * 0.07}s` }}>
-      <div className="sug-priority">
-        <div className="priority-dot" style={{ background: ps.dot }} />
-        <div className="priority-line" />
-      </div>
-      <div className="sug-body">
-        <div className="sug-head">
-          <div className="sug-title">{sug.title}</div>
-          <div className="priority-tag" style={ps.tag}>{sug.priority}</div>
-        </div>
-        <div className="sug-desc">{sug.description}</div>
-        {sug.example && (
-          <div className="sug-example">{sug.example}</div>
-        )}
-      </div>
-    </div>
-  );
-}
+    const SYSTEM_PROMPT = `You are an expert in LLM SEO (also called GEO — Generative Engine Optimization). Your job is to analyze a website's content and score it on how well it is optimized to be cited, referenced, and surfaced by large language models like ChatGPT, Claude, Gemini, and Perplexity.
 
-// ── MAIN APP ──────────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are an expert in LLM SEO (also called GEO — Generative Engine Optimization). Your job is to analyze a website's content and score it on how well it is optimized to be cited, referenced, and surfaced by large language models like ChatGPT, Claude, Gemini, and Perplexity.
+CRITICAL INSTRUCTION: You must be strictly deterministic, highly rigorous, and objective in your scoring. Do not guess, hallucinate, or give the benefit of the doubt. If a feature is not clearly visible or deducible from the fetched content (or your internal knowledge of the brand), you must penalize the score. Your scores must be highly reliable, consistent, and based on verifiable facts.
 
-CRITICAL INSTRUCTION: You must be strictly deterministic, highly rigorous, and objective in your scoring. Do not guess, hallucinate, or give the benefit of the doubt. If a feature (like structured data, author name, or explicit Q&A) is not clearly visible in the fetched content, you must penalize the score. Your scores must be highly reliable, consistent, and 100% based on the verifiable facts from the page content.
+For metrics like "Prompt Visibility Testing" or "External Authority" that require external knowledge, you MUST estimate this based on your own extensive internal training data about the brand/website. If the brand is unknown to you, score it lower.
 
-Fetch and read the page at the given URL, then return ONLY a valid JSON object (no markdown, no commentary, no backticks) with this exact structure:
+Return ONLY a valid JSON object (no markdown, no commentary) with this exact structure:
 
 {
   "overallScore": <number 0-100>,
@@ -660,45 +644,57 @@ Fetch and read the page at the given URL, then return ONLY a valid JSON object (
   "summary": <string: 2-3 sentence overview of the site's LLM-SEO standing>,
   "categories": [
     {
-      "name": "Structured Data",
+      "name": "Prompt Visibility Testing",
       "score": <0-100>,
-      "weight": 15,
+      "weight": 25,
       "issues": [<string: top issue found, or empty>]
     },
     {
-      "name": "Content Clarity",
+      "name": "Semantic Depth & Topical Authority",
       "score": <0-100>,
       "weight": 20,
       "issues": [<string>]
     },
     {
-      "name": "Citability",
+      "name": "Entity Clarity",
       "score": <0-100>,
       "weight": 15,
       "issues": [<string>]
     },
     {
-      "name": "Entity Coverage",
+      "name": "External Authority & Cross-Platform",
       "score": <0-100>,
       "weight": 15,
       "issues": [<string>]
     },
     {
-      "name": "LLM Discoverability",
+      "name": "Citation Worthiness",
+      "score": <0-100>,
+      "weight": 10,
+      "issues": [<string>]
+    },
+    {
+      "name": "Structured Data",
+      "score": <0-100>,
+      "weight": 7,
+      "issues": [<string>]
+    },
+    {
+      "name": "Conversational Query Alignment",
       "score": <0-100>,
       "weight": 5,
       "issues": [<string>]
     },
     {
-      "name": "Answer Density",
+      "name": "Hallucination Risk",
       "score": <0-100>,
-      "weight": 20,
+      "weight": 2,
       "issues": [<string>]
     },
     {
-      "name": "Trust Signals",
+      "name": "Technical Crawlability",
       "score": <0-100>,
-      "weight": 10,
+      "weight": 1,
       "issues": [<string>]
     }
   ],
@@ -713,17 +709,18 @@ Fetch and read the page at the given URL, then return ONLY a valid JSON object (
 }
 
 Scoring rubric:
-- Structured Data: Does the page have JSON-LD schema markup? FAQ schema? Article schema? HowTo schema? (LLMs heavily favor pages with machine-readable structured data)
-- Content Clarity: Are headings clear and descriptive? Is the content written in plain, direct language that directly answers questions? Are definitions provided?
-- Citability: Is there a named author? Publication date? Are claims backed by sources? Does the page demonstrate E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness)?
-- Entity Coverage: Does the content cover its topic comprehensively? Are key named entities, concepts, and related topics present? Is there semantic depth?
-- LLM Discoverability: Is there an llms.txt file? Is robots.txt LLM-friendly (not blocking AI crawlers)? Is there a sitemap? Is OpenGraph metadata present?
-- Answer Density: Does the page directly answer questions? Are there summary boxes, TL;DRs, or clear conclusions? Does the page use Q&A format or numbered lists that LLMs can easily extract?
-- Trust Signals: Is HTTPS used? Is there an About page, contact info, privacy policy? Are there credibility markers (awards, testimonials, team info)?
+- Prompt Visibility Testing (25%): When you (the LLM) are asked a question the brand should answer, would you mention it? Are competitors cited instead? Estimate citation rate based on your internal knowledge of this brand.
+- Semantic Depth & Topical Authority (20%): Does the site cover its core topic thoroughly? Does it use natural language reflecting how users ask AI? Are synonyms and related concepts present?
+- Entity Clarity (15%): Is the brand name consistent? Is there a clear "About" description? Do you know of a Wikipedia/Wikidata entry for them?
+- External Authority & Cross-Platform (15%): How many authoritative 3rd-party sites link to or mention this brand? Do you know of them on Reddit, LinkedIn, YouTube?
+- Citation Worthiness (10%): Are claims backed by data/sources? Are author bylines clear with credentials? Is it structured definition-first?
+- Structured Data (7%): Is Organization, Article, FAQ, or Product schema present? Is JSON-LD used?
+- Conversational Query Alignment (5%): Are there FAQ sections or Q&A formats? Are long-tail, conversational queries targeted?
+- Hallucination Risk (2% - inverse metric! Score 100 if risk is low, 0 if risk is high): Are there conflicting descriptions, outdated facts, or disambiguation risks (shared name with another company)?
+- Technical Crawlability (1%): Is an llms.txt mentioned? Are there signs of JS-blocking or clean semantic HTML?
 
-Generate 5-7 specific, actionable suggestions ordered by impact. Include real examples (code snippets or copy) where helpful.
-
-IMPORTANT: Return ONLY the raw JSON. No text before or after. No markdown code fences.`;
+Generate 5-7 specific, actionable suggestions ordered by impact. Include real examples where helpful.
+IMPORTANT: Return ONLY the raw JSON.`;
 
 export default function App() {
   const [url, setUrl] = useState("");
