@@ -629,7 +629,27 @@ function CatCard({ cat }) {
 function SugCard({ sug, idx }) {
   const ps = priorityStyle(sug.priority);
   return (
-    const SYSTEM_PROMPT = `You are an expert in LLM SEO (also called GEO — Generative Engine Optimization). Your job is to analyze a website's content and score it on how well it is optimized to be cited, referenced, and surfaced by large language models like ChatGPT, Claude, Gemini, and Perplexity.
+    <div className="sug-card" style={{ animationDelay: `${idx * 0.07}s` }}>
+      <div className="sug-priority">
+        <div className="priority-dot" style={{ background: ps.dot }} />
+        <div className="priority-line" />
+      </div>
+      <div className="sug-body">
+        <div className="sug-head">
+          <div className="sug-title">{sug.title}</div>
+          <div className="priority-tag" style={ps.tag}>{sug.priority}</div>
+        </div>
+        <div className="sug-desc">{sug.description}</div>
+        {sug.example && (
+          <div className="sug-example">{sug.example}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are an expert in LLM SEO (also called GEO — Generative Engine Optimization). Your job is to analyze a website's content and score it on how well it is optimized to be cited, referenced, and surfaced by large language models like ChatGPT, Claude, Gemini, and Perplexity.
 
 CRITICAL INSTRUCTION: You must be strictly deterministic, highly rigorous, and objective in your scoring. Do not guess, hallucinate, or give the benefit of the doubt. If a feature is not clearly visible or deducible from the fetched content (or your internal knowledge of the brand), you must penalize the score. Your scores must be highly reliable, consistent, and based on verifiable facts.
 
