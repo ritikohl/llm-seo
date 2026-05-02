@@ -649,6 +649,8 @@ function SugCard({ sug, idx }) {
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are an expert in LLM SEO (also called GEO — Generative Engine Optimization). Your job is to analyze a website's content and score it on how well it is optimized to be cited, referenced, and surfaced by large language models like ChatGPT, Claude, Gemini, and Perplexity.
 
+CRITICAL INSTRUCTION: You must be strictly deterministic, highly rigorous, and objective in your scoring. Do not guess, hallucinate, or give the benefit of the doubt. If a feature (like structured data, author name, or explicit Q&A) is not clearly visible in the fetched content, you must penalize the score. Your scores must be highly reliable, consistent, and 100% based on the verifiable facts from the page content.
+
 Fetch and read the page at the given URL, then return ONLY a valid JSON object (no markdown, no commentary, no backticks) with this exact structure:
 
 {
@@ -796,7 +798,7 @@ export default function App() {
           ],
           tools: [{ googleSearch: {} }],
           generationConfig: {
-            temperature: 0.2
+            temperature: 0
           }
         })
       });
