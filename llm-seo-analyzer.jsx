@@ -759,7 +759,12 @@ export default function App() {
     setErrorMsg("");
 
     try {
-      // Step 1 – tell user what's happening
+      // Fetch content strictly and deterministically using Jina AI
+      setLoadingStep("Fetching static page content...");
+      const jinaRes = await fetch(`https://r.jina.ai/${fullUrl}`);
+      if (!jinaRes.ok) throw new Error("Could not read the target URL. It might be blocking access.");
+      const pageMarkdown = await jinaRes.text();
+
       setLoadingStep("Identifying best available model...");
       
       const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey.trim()}`);
@@ -793,12 +798,12 @@ export default function App() {
           contents: [
             {
               role: "user",
-              parts: [{ text: `Analyze this URL for LLM SEO: ${fullUrl}\n\nFetch the page, read its content, and return the JSON score report.` }]
+              parts: [{ text: `Analyze this webpage strictly for LLM SEO. URL: ${fullUrl}\n\n---PAGE CONTENT---\n${pageMarkdown.substring(0, 60000)}\n\nReturn ONLY the JSON score report.` }]
             }
           ],
-          tools: [{ googleSearch: {} }],
           generationConfig: {
-            temperature: 0
+            temperature: 0,
+            responseMimeType: "application/json"
           }
         })
       });
